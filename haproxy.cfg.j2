@@ -25,7 +25,7 @@ backend app-servers
     mode http
     balance roundrobin
     option forwardfor
-    {% for host in group_names['app'] %}
+    {% for host in groups['apps'] %}
      server {{host}} {{host}}.{{GUID}}.internal:{{port}} cookie app1 check
     {% endfor %}
     

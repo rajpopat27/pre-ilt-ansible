@@ -10,6 +10,13 @@
       - haproxy
       - tomcat
       - postgresql-server
+    postgres_files:
+      - /var/lib/pgsql/
+      - /var/lib/pgsql/backups/
+      - /var/lib/pgsql/data/
+    states:
+      - absent
+      - directory
 
   tasks:
 
@@ -24,6 +31,12 @@
       file:
         state: absent
         path: /etc/yum.repos.d/open_three-tier-app.repo
+        
+    - shell : "rm -rf /var/lib/pgsql/*"
+
+  
+    
+    
 
     - name: Remove base tools and three tier app packages
       yum:
