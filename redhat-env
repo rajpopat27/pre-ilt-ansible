@@ -1,5 +1,5 @@
 export MYKEY=/home/ubuntu/.ssh/redhat.pem
 export MYUSER=raj.popat-tcs.com
 export GUID=a183
-ssh -i @bastion.a183.example.opentlc.com
+ssh -i ${MYKEY} ${MYUSER}@bastion.${GUID}.example.opentlc.com
 ssh -i /home/ubuntu/.ssh/a183key.pem ec2-user@appdb1.a183.example.opentlc.com
