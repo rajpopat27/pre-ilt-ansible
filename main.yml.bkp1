@@ -15,9 +15,7 @@
 
 - name: configuration
   hosts: all
-  
   become: true
-
   tasks:
   - name: enable repos
     template:
@@ -28,71 +26,46 @@
 - name: deploy haproxy
   hosts: frontends
   become: true
-  tasks:
-  - name: http
-    package:
-      name: httpie
-      state: latest
-  - name: install HAProxy
-    yum:
-      name=haproxy state=latest
-  - name: enable HAProxy
-    service:
-      name: haproxy
-      state: started
-  - name: configure haproxy
-    template:
-      src: ./haproxy.cfg.j2
-      dest: /etc/haproxy/haproxy.cfg
-  - name: restart HAproxy
-    service:
-      name: haproxy
-      state: restarted
+
+  
+  
+ 
+   
+      
+    
 
 
 - name: deploy tomcat
   hosts: apps
   become: true
   tasks:
+  
   - name: install tomcat
     package:
       name: tomcat
       state: latest
+      
   - name: enable tomcat at boot
     service:
       name: tomcat
       enabled: yes
+      
   - name: create ansible tomcat directory
     file:
-      path: /usr/share/tomcat/webapps/ROOT
+      path: /usr/share/tomcat/webapps/ansible
       state: directory
 
   - name: copy static index.html to tomcat webapps/ansible/index.html
     template:
       src: index.html.j2
-      dest: /usr/share/tomcat/webapps/ROOT/index.html
-      mode: 0644
+      dest: /usr/share/tomcat/webapps/ansible/index.html
 
   - name: start tomcat
     service:
       name: tomcat
       state: started
-
-- name: index.html on apps
-  hosts: apps
-  become: true
-
-  tasks:
-  - name: copy static index.html to tomcat webapps/ansible/index.html
-    template:
-      src: index.html.j2
-      dest: /usr/share/tomcat/webapps/ansible/index.html
-
-
-
+      
 - name: deploy postgres
-  hosts: apps
-  
   become: true
   hosts: appdbs
   tasks:
@@ -100,15 +73,21 @@
     yum:
       name: postgresql-server
       state: latest
-  - name: enable apache at boot
+  - name: enable postgres at boot
     service:
       name: postgresql
       enabled: yes
-  only run the next 2 tasks once!
-  - name: initilize postgres#    
+      
+  - name: initilize postgres   
     command: postgresql-setup initdb
+    args:
+     creates: /var/lib/pgsql/*
+     
   - name: initilize postgres some more
     command: chkconfig postgresql on
+    args:
+     creates: /var/lib/pgsql/*
+     
   - name: start postgres
     service:
       name: postgresql.service
