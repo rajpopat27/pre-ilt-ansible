@@ -13,13 +13,9 @@
   command: postgresql-setup initdb
   args:
     creates: /var/lib/pgsql/data/postgresql.conf
-     
-- name: initilize postgres some more
-  command: chkconfig postgresql on
-  args:
-    creates: /var/lib/pgsql/data/postgresql.conf
-     
+
 - name: start postgres
   service:
     name: postgresql.service
     state: started
+    enabled: yes
